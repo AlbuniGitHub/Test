@@ -1,0 +1,141 @@
+# Diese GUI besteht aus zwei Seiten:
+# 1. Seite 1 (Page1): Zeigt verfügbare Geräte an und ermöglicht das Scannen nach neuen Geräten.
+#    - Enthält einen "SCAN"-Button, eine dynamische Geräteliste und einen "Roboter"-Button.
+# 2. Seite 2 (Page2): Ermöglicht die Steuerung von LEDs und Motoren.
+#    - Enthält Navigation, LED-Steuerung (Switch), Motorsteuerung (Slider) und einen "start"-Button.
+
+<Page1>:
+    name: 'page1'
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        # Label "Devices" oben
+        BoxLayout:
+            size_hint_y: None
+            height: 50
+            orientation: 'horizontal'
+            padding: 10
+
+            Label:
+                text: "Devices"
+                size_hint_x: 0.7
+                font_size: '20sp'
+
+            Button:
+                text: "SCAN"
+                size_hint_x: 0.3
+                on_press: app.start_scan_devices()  # Scan starten
+
+     
+        BoxLayout:
+            id: device_list
+            orientation: 'horizontal'
+            size_hint_y: 1
+            height: self.minimum_height  # Passt sich automatisch der Anzahl der Geräte an
+
+
+        # Roboter Button 
+        BoxLayout:
+            size_hint_y: None
+            height: 50
+            orientation: 'vertical'
+            padding: 10
+
+            Button:
+                id: roboter_button
+                disabled: True
+                text: "Roboter"
+                on_press: root.go_to_page2()
+
+
+<Page2>:
+    name: 'page2'
+
+    GridLayout:
+        cols: 1
+        rows: 4
+        spacing: 10
+        padding: [20, 20, 20, 20]
+
+        # Erste Zeile: Navigation & Power-Schalter
+        BoxLayout:
+            size_hint_y: None
+            height: 50
+            spacing: 10
+
+            Button:
+                text: "<"
+                size_hint_x: None
+                width: 80
+                on_press: root.go_to_page1()
+
+            Label:
+                text: "LED"
+                size_hint_x: None
+                width: 100
+                halign: 'right'
+                valign: 'middle'
+
+            Switch:
+                id: led_switch
+                size_hint_x: None
+                width: 80
+                active: False  
+                on_active: app.power_led(self, self.active)
+
+        # Zweite Zeile: Sliders für Motorsteuerung
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: 100
+            spacing: 10
+
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 10
+
+                Label:
+                    text: "Motor A"
+                    size_hint_x: None
+                    width: 100
+                    halign: 'right'
+
+                Slider:
+                    id: slider1
+                    min: -99
+                    max: 99
+                    value: 0
+                    on_value: app.spliter_update_data("slider1", self.value)
+
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 10
+
+                Label:
+                    text: "Motor B"
+                    size_hint_x: None
+                    width: 100
+                    halign: 'right'
+
+                Slider:
+                    id: slider2
+                    min: -99
+                    max: 99
+                    value: 0
+                    on_value: app.spliter_update_data("slider2", self.value)
+
+        # Dritte Zeile: Start-Button
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+            padding: [10, 0, 10, 0]
+
+            Button:
+                text: "start"
+                size_hint_y: None
+                height: 50
+                font_size: "18sp"
+                on_press: app.set_mode(self)
+
+
